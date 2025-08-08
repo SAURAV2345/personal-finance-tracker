@@ -1,9 +1,6 @@
 package com.saurav.finance_tracker.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 @Entity
 public class Expense {
@@ -13,6 +10,10 @@ public class Expense {
     private String description;
     private double amount;
     private LocalDate date;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Expense() {
     }
@@ -47,5 +48,13 @@ public class Expense {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
