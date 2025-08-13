@@ -27,12 +27,14 @@ public class ExpenseController {
         if(user == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return ResponseEntity.ok(expenseRepository.findByUser(user));
+        return ResponseEntity.ok(expenseRepository.findByUser(user)); // unable to map user to expense as a result get all expense is coming []
     }
 
     // Create expense
     @PostMapping
-    public Expense createExpense(@RequestBody Expense expense){
+    public Expense createExpense(@RequestBody Expense expense,HttpSession session){
+        User user = (User)session.getAttribute("user");
+        expense.setUser(user);
         return expenseRepository.save(expense);
     }
 

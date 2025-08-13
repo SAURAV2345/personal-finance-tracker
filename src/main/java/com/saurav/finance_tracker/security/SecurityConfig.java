@@ -26,9 +26,11 @@ public class SecurityConfig {
                  .csrf().disable()
                  .headers().frameOptions().sameOrigin().and() // needed for H2 console
                  .authorizeRequests().antMatchers("/hello","/h2-console/**","/api/auth/signup","/api/auth/login").permitAll()
-                 .anyRequest().authenticated()
+                 .anyRequest().permitAll()
                  .and()
-                 .httpBasic();
+                 .formLogin()
+                 .and()
+                 .logout();
          return http.build();
      }
 
@@ -51,9 +53,9 @@ public class SecurityConfig {
         return new CustomUserDetailsService(userRepository);
     }
 
-    @Bean
+   /** @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
-    }
+    }**/
 
 }
