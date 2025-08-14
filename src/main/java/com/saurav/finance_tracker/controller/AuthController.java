@@ -54,22 +54,26 @@ public class AuthController {
 //        SecurityContextHolder.getContext().setAuthentication(auth);
         // Storing session info
 
-        if ("abc@gmail.com".equals(loginRequest.getEmail()) &&
-                "abc".equals(loginRequest.getPassword())) {
 
-            String token = jwtUtil.generateToken(loginRequest.getEmail());
-            return ResponseEntity.ok(token);
-        }
 
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElse(null);
+
 
         if (user == null || !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
 
-        // Store user in session
-        session.setAttribute("user", user);
+
+
+        if (user.getEmail().equals(loginRequest.getEmail()) &&
+                passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+
+            String token = jwtUtil.generateToken(loginRequest.getEmail());
+            // Store user in session
+            session.setAttribute("user", user);
+            return ResponseEntity.ok(token);
+        }
 
         return ResponseEntity.ok("Login Successful");
 
