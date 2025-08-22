@@ -1,10 +1,12 @@
 package com.saurav.finance_tracker.controller;
 
 
+import com.saurav.finance_tracker.dto.MonthySummaryDto;
 import com.saurav.finance_tracker.model.Expense;
 import com.saurav.finance_tracker.model.User;
 import com.saurav.finance_tracker.repository.ExpenseRepository;
 import com.saurav.finance_tracker.service.ExpenseService;
+import com.saurav.finance_tracker.service.SummaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -17,7 +19,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/expenses")
@@ -28,6 +29,9 @@ public class ExpenseController {
 
     @Autowired
     private ExpenseService expenseService;
+
+    @Autowired
+    private SummaryService summaryService;
 
     // get all expenses
     @GetMapping
@@ -85,6 +89,12 @@ public class ExpenseController {
         response.put("nextCursor", nextCursor);
         return response;
 
+    }
+    @GetMapping("/summary/monthly/{userId}")
+    public MonthySummaryDto getSummary(@PathVariable Long userId,
+                                       @RequestParam int month,
+                                       @RequestParam int year){
+        return summaryService.monthlySummary(userId,month,year);
     }
 
 
