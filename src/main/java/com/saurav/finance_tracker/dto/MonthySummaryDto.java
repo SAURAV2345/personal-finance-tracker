@@ -1,6 +1,8 @@
 package com.saurav.finance_tracker.dto;
 
-public class MonthySummaryDto {
+import java.io.Serializable;
+
+public class MonthySummaryDto implements Serializable {
     private int month;
     private int year;
     private double monthSummary;

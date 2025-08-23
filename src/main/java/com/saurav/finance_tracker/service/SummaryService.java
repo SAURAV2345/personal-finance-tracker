@@ -3,6 +3,7 @@ package com.saurav.finance_tracker.service;
 import com.saurav.finance_tracker.dto.MonthySummaryDto;
 import com.saurav.finance_tracker.model.Expense;
 import com.saurav.finance_tracker.repository.ExpenseRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,8 +17,10 @@ public class SummaryService {
     public SummaryService(ExpenseRepository expenseRepository){
         this.expenseRepository=expenseRepository;
     }
-
+    @Cacheable(value="monthlySummary",key="#userId+'-'+#month+'-'+#year")
     public MonthySummaryDto monthlySummary(Long userId, int month, int year){
+
+        System.out.println("Fetching data from DB for userId=" + userId + " month=" + month + " year=" + year);
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 

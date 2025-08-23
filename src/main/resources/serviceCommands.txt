@@ -1,0 +1,10 @@
+# Redis Commands Windows CMD
+docker run --name my-redis -p 6379:6379 -d redis
+docker exec -it redis redis-cli
+KEYS *
+
+# Kafka Commands
+docker-compose up -d
+docker exec -it kafka bash
+kafka-topics --bootstrap-server localhost:9092 --list
+kafka-console-consumer --bootstrap-server localhost:9092 --topic expenses-topic --from-beginning

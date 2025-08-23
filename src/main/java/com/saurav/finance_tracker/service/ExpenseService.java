@@ -23,6 +23,8 @@ public class ExpenseService {
     private ExpenseRepository expenseRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ExpenseEventProducer expenseEventProducer;
 
     public List<Expense> getAllExpense(String username){
         User user = userRepository.findByEmail(username)
@@ -31,7 +33,10 @@ public class ExpenseService {
     }
 
     public Expense createExpense(Expense expense){
-        return expenseRepository.save(expense);
+        Expense saved = expenseRepository.save(expense);
+        expenseEventProducer.publishExpenseEvent("ExpenseCreated-"+expense.getId());
+        return saved;
+
 
     }
 
