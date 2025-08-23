@@ -1,3 +1,9 @@
+# Git Commands
+git add .
+git commit -m "Added monthly summary"
+git push -u origin master
+
+
 # Redis Commands Windows CMD
 docker run --name my-redis -p 6379:6379 -d redis
 docker exec -it redis redis-cli

@@ -1,5 +1,6 @@
 package com.saurav.finance_tracker.service;
 
+import com.saurav.finance_tracker.dto.ExpenseEvent;
 import com.saurav.finance_tracker.model.Expense;
 import com.saurav.finance_tracker.model.User;
 import com.saurav.finance_tracker.repository.ExpenseRepository;
@@ -34,7 +35,17 @@ public class ExpenseService {
 
     public Expense createExpense(Expense expense){
         Expense saved = expenseRepository.save(expense);
-        expenseEventProducer.publishExpenseEvent("ExpenseCreated-"+expense.getId());
+
+        //expenseEventProducer.publishExpenseEvent("ExpenseCreated by user -"+expense.getUser().getId()+" on "+expense.getDate());
+
+        ExpenseEvent event = new ExpenseEvent();
+        event.setEventType("ExpenseCreated");
+        event.setUserId(expense.getUser().getId());
+        event.setExpenseDate(expense.getDate());
+        event.setExpenseId(expense.getId());
+
+        expenseEventProducer.publishExpenseEvent(event);
+
         return saved;
 
 
