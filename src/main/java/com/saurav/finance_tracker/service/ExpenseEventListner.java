@@ -14,9 +14,10 @@ public class ExpenseEventListner {
         this.summaryService=summaryService;
     }
 
-    @KafkaListener(topics = "expense-topic",groupId = "expense-group")
+    @KafkaListener(topics = "expenses-topic",groupId = "expense-group")
     public void handleExpenseEvent(ExpenseEvent event) {
         // Get the Expenseid from the event published
+        System.out.println("Expense even received updating summary");
         int month = event.getExpenseDate().getMonthValue();
         int year = event.getExpenseDate().getYear();
 

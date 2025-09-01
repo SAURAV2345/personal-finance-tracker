@@ -38,6 +38,7 @@ public class SummaryService {
 
     @CachePut(value="monthlySummary", key="#userId+'-'+#month+'-'+#year")
     public MonthySummaryDto refreshMonthlySummary(Long userId, int month, int year) {
+        System.out.println("Calling calculateSummary for the event received from kafka");
         return calculateSummary(userId, month, year);
     }
 

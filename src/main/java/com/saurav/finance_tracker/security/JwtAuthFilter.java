@@ -58,7 +58,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 
 
-            } else if (!httpRequest.getRequestURI().equals("/api/auth/login") && !httpRequest.getRequestURI().equals("/api/auth/signup")) {
+            } else if (!httpRequest.getRequestURI().equals("/api/auth/login") && !httpRequest.getRequestURI().equals("/api/auth/signup") &&
+        !httpRequest.getRequestURI().equals("/actuator/prometheus")) {
             ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing Token");
             return;
         }
