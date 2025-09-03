@@ -1,8 +1,10 @@
 package com.saurav.finance_tracker.controller;
 
+import com.saurav.finance_tracker.dto.LoginEvent;
 import com.saurav.finance_tracker.dto.LoginRequest;
 import com.saurav.finance_tracker.model.User;
 import com.saurav.finance_tracker.repository.UserRepository;
+import com.saurav.finance_tracker.service.ExpenseEventProducer;
 import com.saurav.finance_tracker.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.time.LocalDateTime;
 
 import javax.servlet.http.HttpSession;
 
@@ -33,8 +36,8 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    //@Autowired
-   // private AuthenticationManager authenticationManager;
+    @Autowired
+    private ExpenseEventProducer expenseEventProducer;
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody User user){
@@ -49,12 +52,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpSession session){
-//        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),loginRequest.getPassword());
-//        Authentication auth = authenticationManager.authenticate(token);
-//        SecurityContextHolder.getContext().setAuthentication(auth);
-        // Storing session info
-
-
 
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElse(null);
@@ -72,6 +69,14 @@ public class AuthController {
             String token = jwtUtil.generateToken(loginRequest.getEmail());
             // Store user in session
             session.setAttribute("user", user);
+
+            // create login event and sent to Kafka
+
+            LoginEvent loginEvent = new LoginEvent();
+            loginEvent.setUsername(user.getEmail());
+            loginEvent.setLoginDate(LocalDateTime.now());
+            expenseEventProducer.publishLoginEvent(loginEvent);
+
             return ResponseEntity.ok(token);
         }
 
