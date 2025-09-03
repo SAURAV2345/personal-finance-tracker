@@ -15,10 +15,11 @@ public class ExpenseEventProducer {
     }
 
     public void publishExpenseEvent(ExpenseEvent event) {
-        kafkaTemplate.send("expenses-topic", event);
+        kafkaTemplate.send("expenses-topic",String.valueOf(event.getUserId()), event);
+
     }
     public void publishLoginEvent(LoginEvent event) {
-        kafkaTemplate.send("userLogin-topic", event);
+        kafkaTemplate.send("userLogin-topic",String.valueOf(event.getUsername()), event);
     }
 
 }
