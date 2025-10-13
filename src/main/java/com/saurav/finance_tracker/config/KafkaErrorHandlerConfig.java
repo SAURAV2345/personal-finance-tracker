@@ -1,6 +1,7 @@
 package com.saurav.finance_tracker.config;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,8 +21,15 @@ public class KafkaErrorHandlerConfig {
     @Bean
     public DefaultErrorHandler errorHandler() {
         // Send failed messages to a Dead Letter Topic
+        /**DeadLetterPublishingRecoverer recoverer =
+                new DeadLetterPublishingRecoverer(kafkaTemplate);**/
+
         DeadLetterPublishingRecoverer recoverer =
-                new DeadLetterPublishingRecoverer(kafkaTemplate);
+                new DeadLetterPublishingRecoverer(kafkaTemplate,
+                        (record, ex) -> {
+                            System.err.println("⚠️ Sending to DLT due to exception: " + ex.getMessage());
+                            return new TopicPartition(record.topic() + ".DLT", record.partition());
+                        });
 
         // Exponential backoff: starts at 1 second, doubles each time, max 10 seconds, retries 5 times
         ExponentialBackOff backOff = new ExponentialBackOff();
